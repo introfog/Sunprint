@@ -1,0 +1,12 @@
+$ git log
+commit 65b50ec20a1badd7f5c46a8008d5f0eeccf6fa71 (HEAD -> task1, origin/task1)
+Author: Chubrick Dima <chubrickdm@gmail.com>
+Date:   Fri Feb 9 20:05:51 2018 +0300
+
+    Add status.txt
+
+commit 4fe1e7f4682822e167e85472dcc90455820e2c54 (origin/master, master)
+Author: Chubrick Dima <chubrickdm@gmail.com>
+Date:   Fri Feb 9 20:03:41 2018 +0300
+
+    Add .gitignore
