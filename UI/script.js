@@ -1,4 +1,4 @@
-(function() {
+(function () {
     var photoPosts = [
         {
             id: '1',
@@ -143,110 +143,102 @@
     ];
 
 
-    function getPhotoPosts(skip, top, filterConfig){
+    function getPhotoPosts(skip, top, filterConfig) {
         skip = skip || 0;
         top = top || 10;
 
         let result = [];
-        if (filterConfig !== undefined && "author" in filterConfig){
+        if (filterConfig !== undefined && "author" in filterConfig) {
             photoPosts.forEach(function (value) {
-                if (value.author === filterConfig.author){
+                if (value.author === filterConfig.author) {
                     result.push(value);
                 }
             });
-            result.sort(function (a, b) {
-                return a.createdAt - b.createdAt;
-            });
-            result = result.slice(skip, top);
         }
-        else{
+        else {
             result = photoPosts.slice();
-            result.sort(function (a, b) {
-                return a.createdAt - b.createdAt;
-            });
-            result = result.slice(skip, top);
         }
 
-        return result;
-    }
-
-    function getPhotoPost(id){
-        let result = null;
-        photoPosts.forEach(function (value) {
-            if (value.id === id){
-                result = value;
-            }
+        result.sort(function (a, b) {
+            return b.createdAt - a.createdAt;
         });
+        result = result.slice(skip, top);
 
         return result;
     }
 
-    function validatePhotoPost(post){
-        if (post === undefined){
+    function getPhotoPost(id) {
+        return photoPosts.find(function (item) {
+           return item.id === id;
+        });
+    }
+
+    function validatePhotoPost(post) {
+        if (post === undefined) {
             return false;
         }
-        if (!("id" in post && (typeof post.id === "string"))){
+        if (!("id" in post && (typeof post.id === "string"))) {
             return false;
         }
-        if (!("description" in post && (typeof post.description === "string") && post.description.length < 200)){
+        if (!("description" in post && (typeof post.description === "string") && post.description.length < 200)) {
             return false;
         }
-        if (!("createdAt" in post && post.createdAt instanceof Date)){
+        if (!("createdAt" in post && post.createdAt instanceof Date)) {
             return false;
         }
-        if (!("author" in post && (typeof post.author === "string"))){
+        if (!("author" in post && (typeof post.author === "string"))) {
             return false;
         }
-        if (!("photoLink" in post && (typeof post.author === "string"))){
+        if (!("photoLink" in post && (typeof post.author === "string"))) {
             return false;
         }
 
         return true;
     }
 
-    function addPhotoPost(post){
-        if (validatePhotoPost(post)){
+    function addPhotoPost(post) {
+        if (validatePhotoPost(post)) {
             photoPosts.push(post);
+            photoPosts.sort(function (a, b) {
+                return b.createdAt - a.createdAt;
+            });
             return true;
         }
         return false;
     }
 
-    function editPhotoPost(id, photoPost){
-        if (!photoPost){
+    function editPhotoPost(id, photoPost) {
+        if (!photoPost) {
             return false;
         }
 
-        let result = null;
-        photoPosts.forEach(function(item){
-           if (item.id === id){
-               result = item;
-           }
+        let result = photoPosts.find(function (item) {
+            return item.id === id;
         });
 
-        if (result === null){
+        if (result === null) {
             return false;
         }
-        else{
+        else {
 
-            if ("description" in photoPost && (typeof photoPost.description === "string") && photoPost.description.length < 200){
+            if ("description" in photoPost && (typeof photoPost.description === "string") && photoPost.description.length < 200) {
                 result.description = photoPost.description;
             }
-            if ("photoLink" in photoPost && (typeof photoPost.author === "string")){
+            if ("photoLink" in photoPost && (typeof photoPost.author === "string")) {
                 result.photoLink = photoPost.photoLink;
             }
         }
     }
 
-    function removePhotoPost(id){
+    function removePhotoPost(id) {
         let result = null;
-        photoPosts.forEach(function(item){
-            if (item.id === id){
+        photoPosts.forEach(function (item) {
+            if (item.id === id) {
                 result = item;
             }
         });
 
-        if (result === null){
+        if (result === null) {
             return false;
         }
         else {
@@ -254,7 +246,6 @@
             return true;
         }
     }
-
 
 
     function run() {
@@ -278,13 +269,15 @@
             description: 'Женская сборная',
             createdAt: new Date('2018-02-23T23:00:00'),
             author: 'Денис',
-            photoLink: 'Photos\\Empty photo 1'}));
+            photoLink: 'Photos\\Empty photo 1'
+        }));
         console.log(validatePhotoPost({
             id: '21',
             description: 'Женская сборная',
             createdAt: new Date('2018-02-23T23:00:00'),
             author: 2,
-            photoLink: 'Photos\\Empty photo 1'}));
+            photoLink: 'Photos\\Empty photo 1'
+        }));
 
         console.log("\nadd photo post\n");
         addPhotoPost({
