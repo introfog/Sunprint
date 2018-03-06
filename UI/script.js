@@ -1,5 +1,5 @@
-(function () {
-    var photoPosts = [
+var module = (function () {
+    let photoPosts = [
         {
             id: '1',
             description: 'Женская сборная Беларуси выиграла эстафету.',
@@ -143,7 +143,7 @@
     ];
 
 
-    function getPhotoPosts(skip, top, filterConfig) {
+    let getPhotoPosts = function (skip, top, filterConfig) {
         skip = skip || 0;
         top = top || 10;
 
@@ -165,15 +165,15 @@
         result = result.slice(skip, top);
 
         return result;
-    }
+    };
 
-    function getPhotoPost(id) {
+    let getPhotoPost = function (id) {
         return photoPosts.find(function (item) {
-           return item.id === id;
+            return item.id === id;
         });
-    }
+    };
 
-    function validatePhotoPost(post) {
+    let validatePhotoPost = function (post) {
         if (post === undefined) {
             return false;
         }
@@ -194,9 +194,9 @@
         }
 
         return true;
-    }
+    };
 
-    function addPhotoPost(post) {
+    let addPhotoPost = function (post) {
         if (validatePhotoPost(post)) {
             photoPosts.push(post);
             photoPosts.sort(function (a, b) {
@@ -205,9 +205,9 @@
             return true;
         }
         return false;
-    }
+    };
 
-    function editPhotoPost(id, photoPost) {
+    let editPhotoPost = function (id, photoPost) {
         if (!photoPost) {
             return false;
         }
@@ -228,9 +228,9 @@
                 result.photoLink = photoPost.photoLink;
             }
         }
-    }
+    };
 
-    function removePhotoPost(id) {
+    let removePhotoPost = function (id) {
         let result = null;
         photoPosts.forEach(function (item) {
             if (item.id === id) {
@@ -245,64 +245,66 @@
             photoPosts.splice(photoPosts.indexOf(result), 1);
             return true;
         }
-    }
+    };
 
-
-    function run() {
-        console.log("\ngetPhotoPosts():\n");
-        getPhotoPosts().forEach(function (value) {
-            console.log(value.id + " \t" + value.createdAt);
-        });
-
-        console.log("\ngetPhotoPosts(0, 10, {author: 'Дима'}):\n");
-        getPhotoPosts(0, 10, {author: 'Дима'}).forEach(function (value) {
-            console.log(value.author + " " + value.createdAt);
-        });
-
-        console.log("\ngetPhotoPost('1')\n");
-        let result = getPhotoPost('1');
-        console.log(result.id + " " + result.author + " " + result.createdAt);
-
-        console.log("\nvalidatePhotoPost\n");
-        console.log(validatePhotoPost({
-            id: '21',
-            description: 'Женская сборная',
-            createdAt: new Date('2018-02-23T23:00:00'),
-            author: 'Денис',
-            photoLink: 'Photos\\Empty photo 1'
-        }));
-        console.log(validatePhotoPost({
-            id: '21',
-            description: 'Женская сборная',
-            createdAt: new Date('2018-02-23T23:00:00'),
-            author: 2,
-            photoLink: 'Photos\\Empty photo 1'
-        }));
-
-        console.log("\nadd photo post\n");
-        addPhotoPost({
-            id: '21',
-            description: 'Женская сборная',
-            createdAt: new Date('1890-02-23T23:00:00'),
-            author: 'Денис',
-            photoLink: 'Photos\\Empty photo 1'
-        });
-        console.log("After post adding");
-        getPhotoPosts().forEach(function (value) {
-            console.log(value.id + " \t" + value.createdAt);
-        });
-
-        console.log("\nedit photo post\n");
-        editPhotoPost('21', {
-            description: "измененное описание."
-        })
-        getPhotoPosts(0, 1).forEach(function (value) {
-            console.log(value.id + " " + value.description);
-        });
-
-        console.log("\nremove post\n");
-        removePhotoPost('4');
-    }
-
-    run();
+    return {getPhotoPosts, getPhotoPost, validatePhotoPost, addPhotoPost, editPhotoPost, removePhotoPost};
 })();
+
+
+function run() {
+    console.log("\ngetPhotoPosts():\n");
+    module.getPhotoPosts().forEach(function (value) {
+        console.log(value.id + " \t" + value.createdAt);
+    });
+
+    console.log("\ngetPhotoPosts(0, 10, {author: 'Дима'}):\n");
+    module.getPhotoPosts(0, 10, {author: 'Дима'}).forEach(function (value) {
+        console.log(value.author + " " + value.createdAt);
+    });
+
+    console.log("\ngetPhotoPost('1')\n");
+    let result = module.getPhotoPost('1');
+    console.log(result.id + " " + result.author + " " + result.createdAt);
+
+    console.log("\nvalidatePhotoPost\n");
+    console.log(module.validatePhotoPost({
+        id: '21',
+        description: 'Женская сборная',
+        createdAt: new Date('2018-02-23T23:00:00'),
+        author: 'Денис',
+        photoLink: 'Photos\\Empty photo 1'
+    }));
+    console.log(module.validatePhotoPost({
+        id: '21',
+        description: 'Женская сборная',
+        createdAt: new Date('2018-02-23T23:00:00'),
+        author: 2,
+        photoLink: 'Photos\\Empty photo 1'
+    }));
+
+    console.log("\nadd photo post\n");
+    module.addPhotoPost({
+        id: '21',
+        description: 'Женская сборная',
+        createdAt: new Date('1890-02-23T23:00:00'),
+        author: 'Денис',
+        photoLink: 'Photos\\Empty photo 1'
+    });
+    console.log("After post adding");
+    module.getPhotoPosts().forEach(function (value) {
+        console.log(value.id + " \t" + value.createdAt);
+    });
+
+    console.log("\nedit photo post\n");
+    module.editPhotoPost('21', {
+        description: "измененное описание."
+    });
+    module.getPhotoPosts(0, 1).forEach(function (value) {
+        console.log(value.id + " " + value.description);
+    });
+
+    console.log("\nremove post\n");
+    module.removePhotoPost('4');
+}
+
+run();
