@@ -9,22 +9,24 @@ body{
 
 .header{
 	float: top;
-	display: flex;
+	
 
 	width: 100%;
 	position: fixed;
+	top: 0;
 	z-index: 1000;
+	background-color: rgba(150, 150, 255, 0.7);
 }
 
 .header_column{
-	width: 33.33%;
+	width: 25%;
 	height: 50px;
 
 	float: left;
 	display: flex; 
 
 	align-items: center; 
-	background-color: rgba(150, 150, 255, 0.5);
+	
 }
 
 .button{
@@ -46,7 +48,7 @@ body{
 }
 
 .log_in_button{
-	width: 100px;
+	width: 150px;
 	height: 25px;
 
 	margin-left: 5%;
@@ -63,7 +65,7 @@ body{
 
 .photo_feed{
 	float: top;
-	display: flex;
+	position: relative;
 
 	width: 100%;
 }
@@ -72,31 +74,29 @@ body{
 	width: 70%;
 
 	float: left;
-	display: flex;
 
 	justify-content: center;
 }
 
 .search_settings_half{
 	width: 30%;
-	height: 50px;
+	height: 200px;
 
-	float: left;
-	display: flex;
+	position: fixed;
+	right: 0;
 
 	margin-top: 50px;
+	background-color: rgba(255, 150, 150, 0.5);
 }
 
-.search_settings_column{
-	width: 25%;
-	height: 100%;
+.search_settings{
+	width: 50%;
+	height: 50px;
 
-	float: left;
-	display: flex;
+	margin-left: 25%;
 
 	align-items: center; 
 	justify-content: center;
-	background-color: rgba(255, 150, 150, 0.5);
 }
 
 .filter_text{
@@ -105,28 +105,21 @@ body{
 	color: black;
 }
 
-.hashtag_button{
-	width: 90%;
-	height: 25px;
-}
+.setting_input{
+	width: 100%;
+	height: 50%;
 
-.data_button{
-	width: 90%;
-	height: 25px;
-}
-
-.author_button{
-	width: 90%;
-	height: 25px;
+	background-color: rgba(150, 150, 255, 0.6);
 }
 
 .photo_post{
 	background-color: rgba(255, 150, 150, 0.5);
 
 	margin-top: 50px;
+	margin-left: 27.5%;
 
 	width: 45%;
-	height: 85%;
+	height: 75%;
 
 	margin-bottom: 50px;
 }
@@ -152,11 +145,21 @@ body{
 
 .data{
 	color: black;
-	margin-left: 30%;
+	right: 0;
 }
 
-.like_button{
-	width: 15%;
+.post_control{
+	width: 33.33%;
+	height: 50px;
+
+	float: left;
+	/*display: flex;*/
+
+	align-items: center; 
+	background-color: rgba(0, 0, 0, 0);
+}
+
+.post_control_button{
 	height: 45px;
 
 	border-radius: 0px;
@@ -166,23 +169,28 @@ body{
 }
 
 .description_hashtags{
+	clear: left;
+	float: top;
 	color: black;
 
-	margin-left: 10px;
+	height: 30px;
+
+	margin-left: 5px;
 }
 
 
 .footer{
-	float: top;
 	display: flex;
 
+	position: fixed;
 	width: 100%;
-	height: 60px;
+	height: 50px;
 
+	bottom: 0;
 
 	align-items: center; 
 	justify-content: center;
-	background-color: rgba(150, 255, 150, 0.5);
+	background-color: rgba(150, 255, 150, 0.7);
 }
 
 .footer_text{

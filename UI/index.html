@@ -19,43 +19,59 @@
 			<div class="project_name">Sunprint</div>
 		</div>
 		<div class="header_column">
-			<button class="add_photo_button button">Add photo</button>
+			<button class="add_photo_button button">Add</button>
 		</div>
 		<div class="header_column">
-			<button class="log_in_button button">Log in</button>
+			<button class="log_in_button button" id="log_in_button">Log in</button>
 		</div>
 	</section>
 
 	<!-- PHOTO FEED -->
 
 	<section class="photo_feed">
-		<div class="photo_thread_half">
-			<div class="photo_post">
+		<div class="photo_thread_half" id="photo_thread_half">
+
+			<!-- <div class="photo_post">
 				<div class="photo_post_header">
-					<div class="author_name">Author name</div>
+					<div class="author_name">Example post</div>
 				</div>
 				<div class="photo_post_header">
 					<div class="data">25.02.2018</div>
 				</div>
 				<img src="Photos\Empty photo 1.png" alt="Sorry! No photo." width="100%"> 
-				<button class="like_button">
-					<img src="Like.png" alt="Sorry! No photo." height="100%">
-				</button>
+				<div class="post_control">
+					<button class="post_control_button">
+						<img src="Like.png" alt="Sorry! No photo." height="100%">
+					</button>
+				</div>
+				<div class="post_control">
+					<button class="post_control_button">
+						<img src="Edit.png" alt="Sorry! No photo." height="100%">
+					</button>
+				</div>
+				<div class="post_control">
+					<button class="post_control_button">
+						<img src="Remove.png" alt="Sorry! No photo." height="100%">
+					</button>
+				</div>
+				
 				<div class="description_hashtags">Description and hashtags...</div>
-			</div>
+			</div> -->
+
 		</div>
+
 		<div class="search_settings_half">
-			<div class="search_settings_column">
+			<div class="search_settings">
 				<div class="filter_text">Filter:</div>
 			</div>
-			<div class="search_settings_column">
-				<button class="hashtag_button button">Hashtag</button>
+			<div class="search_settings">
+				<input type="text" class="setting_input button" placeholder="Hashtags"></input>
 			</div>
-			<div class="search_settings_column">
-				<button class="data_button button">Data</button>
+			<div class="search_settings">
+				<input type="date" class="setting_input button"></input>
 			</div>
-			<div class="search_settings_column">
-				<button class="author_button button">Author</button>
+			<div class="search_settings">
+				<input type="text" class="setting_input button" placeholder="Author name"></input>
 			</div>
 		</div>
 	</section>
