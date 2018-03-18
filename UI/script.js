@@ -81,14 +81,14 @@ var module = (function () {
             id: '12',
             description: 'Вчера вечером я был в городе.',
             createdAt: new Date('2016-02-23T13:34:00'),
-            author: 'Дима',
+            author: 'Димка',
             photoLink: 'Photos\\Empty photo 12.png'
         },
         {
             id: '13',
             description: 'Ребята, намечается тусовка 15 марта, кто пойдет?',
             createdAt: new Date('2018-03-25T13:00:00'),
-            author: 'Дима',
+            author: 'Димка',
             photoLink: 'Photos\\Empty photo 13.png'
         },
         {
@@ -151,6 +151,13 @@ var module = (function () {
         if (filterConfig !== undefined && "author" in filterConfig) {
             photoPosts.forEach(function (value) {
                 if (value.author === filterConfig.author) {
+                    result.push(value);
+                }
+            });
+        }
+        else if (filterConfig !== undefined && "createdAt" in filterConfig){
+            photoPosts.forEach(function (value) {
+                if (value.createdAt > filterConfig.createdAt) {
                     result.push(value);
                 }
             });
@@ -251,78 +258,85 @@ var module = (function () {
 })();
 
 
-function run() {
-    console.log("\ngetPhotoPosts():\n");
-    module.getPhotoPosts().forEach(function (value) {
-        console.log(value.id + " \t" + value.createdAt);
-    });
+var EventsHandlers = (function (){
+    let handleRemovePhotoPost = function () {
+        DOMmodule.removePhotoPost(this.getAttribute("id"));
+    };
 
-    console.log("\ngetPhotoPosts(0, 10, {author: 'Дима'}):\n");
-    module.getPhotoPosts(0, 10, {author: 'Дима'}).forEach(function (value) {
-        console.log(value.author + " " + value.createdAt);
-    });
+    let handleSearchAuthor = function () {
+        DOMmodule.showPhotoPosts(true, 0, 10, {author: this.value});
+    };
 
-    console.log("\ngetPhotoPost('1')\n");
-    let result = module.getPhotoPost('1');
-    console.log(result.id + " " + result.author + " " + result.createdAt);
+    let handleSearchDate = function () {
+        DOMmodule.showPhotoPosts(true, 0, 10, {createdAt: new Date (this.value)});
+    };
 
-    console.log("\nvalidatePhotoPost\n");
-    console.log(module.validatePhotoPost({
-        id: '21',
-        description: 'Женская сборная',
-        createdAt: new Date('2018-02-23T23:00:00'),
-        author: 'Денис',
-        photoLink: 'Photos\\Empty photo 1'
-    }));
-    console.log(module.validatePhotoPost({
-        id: '21',
-        description: 'Женская сборная',
-        createdAt: new Date('2018-02-23T23:00:00'),
-        author: 2,
-        photoLink: 'Photos\\Empty photo 1'
-    }));
+    let handleResetSettings = function () {
+        DOMmodule.showPhotoPosts(true);
+        let searchAuthor = document.getElementById("search_author");
+        searchAuthor.value="";
+        let searchDate = document.getElementById("search_date");
+        searchDate.value="";
+    };
 
-    console.log("\nadd photo post\n");
-    module.addPhotoPost({
-        id: '21',
-        description: 'Женская сборная',
-        createdAt: new Date('1890-02-23T23:00:00'),
-        author: 'Денис',
-        photoLink: 'Photos\\Empty photo 1'
-    });
-    console.log("After post adding");
-    module.getPhotoPosts().forEach(function (value) {
-        console.log(value.id + " \t" + value.createdAt);
-    });
+    let handleShowMorePosts = function () {
+        DOMmodule.showPhotoPosts(false, 0, 10);
+    };
 
-    console.log("\nedit photo post\n");
-    module.editPhotoPost('21', {
-        description: "измененное описание."
-    });
-    module.getPhotoPosts(0, 1).forEach(function (value) {
-        console.log(value.id + " " + value.description);
-    });
+    let handleLogIn = function () {
+        if (user === null){
+            let modalWindow = document.getElementById("log_in_modal_window");
+            modalWindow.style.display = "block";
+        }
+        else{
+            user = null;
+            let logInBut = document.getElementById("log_in_button");
+            logInBut.innerText = "Log in";
+            DOMmodule.checkAuthorization();
+            DOMmodule.showPhotoPosts();
+        }
+    };
 
-    console.log("\nremove post\n");
-    module.removePhotoPost('4');
-}
+    let handleCloseModalWin = function () {
+        let modalWindow = document.getElementById("log_in_modal_window");
+        modalWindow.style.display = "none";
+    };
 
-//run();
+    let handleConfirmLogIn = function () {
+        let nickname = document.getElementById("log_in_nickname");
+        let password = document.getElementById("log_in_password");
+        if (nickname.value !== ""){
+            user = nickname.value;
+            let logInBut = document.getElementById("log_in_button");
+            logInBut.innerText = user;
+            DOMmodule.checkAuthorization();
+            DOMmodule.showPhotoPosts();
+            let modalWindow = document.getElementById("log_in_modal_window");
+            modalWindow.style.display = "none";
+            nickname.value = "";
+            password.value = "";
+        }
+    };
+
+    return {handleRemovePhotoPost, handleSearchAuthor, handleResetSettings, handleSearchDate, handleShowMorePosts,
+    handleLogIn, handleCloseModalWin, handleConfirmLogIn};
+})();
 
 
-var user = "Dima Chubrick";
+var user = "introfog";
+let visiblePosts = 0;
 
 var DOMmodule = (function () {
     let photoThreadHalf = document.getElementById("photo_thread_half");
-
     let photoPosts = [];
+
 
     function createPost(value) {
         let finder = photoPosts.find(function (item) {
-            return item.getAttribute("id") === value.id;
+            return null;
         });
         if (finder !== undefined) {
-            return finder;
+            return null;
         }
 
         let photoPost = document.createElement("div");
@@ -341,7 +355,7 @@ var DOMmodule = (function () {
         header.setAttribute("class", "photo_post_header");
         author = document.createElement("div");
         author.setAttribute("class", "data");
-        author.textContent = value.createdAt.getDate().toString() + "." + value.createdAt.getMonth().toString() + "." + value.createdAt.getFullYear().toString();
+        author.textContent = value.createdAt.getDate().toString() + "." + (value.createdAt.getMonth() + 1).toString() + "." + value.createdAt.getFullYear().toString();
         header.appendChild(author);
         photoPost.appendChild(header);
 
@@ -379,7 +393,9 @@ var DOMmodule = (function () {
             div = document.createElement("div");
             div.setAttribute("class", "post_control");
             button = document.createElement("button");
+            button.addEventListener('click', EventsHandlers.handleRemovePhotoPost);
             button.setAttribute("class", "post_control_button");
+            button.setAttribute("id", value.id);
             img = document.createElement("img");
             img.setAttribute("src", "Remove.png");
             img.setAttribute("alt", "Sorry! No photo.");
@@ -407,16 +423,56 @@ var DOMmodule = (function () {
         }
     }
 
-    let showPhotoPosts = function () {
-        clear();
-        module.getPhotoPosts().forEach(function (value) {
-            photoThreadHalf.appendChild(createPost(value));
+    function initialUI() {
+        let searchDate = document.getElementById("search_date");
+        searchDate.addEventListener('change', EventsHandlers.handleSearchDate);
+
+        let searchAuthor = document.getElementById("search_author");
+        searchAuthor.addEventListener('change', EventsHandlers.handleSearchAuthor);
+
+        let resetSettings = document.getElementById("reset_settings_button");
+        resetSettings.addEventListener('click', EventsHandlers.handleResetSettings);
+
+        let showMore = document.getElementById("show_more_posts");
+        showMore.addEventListener('click', EventsHandlers.handleShowMorePosts);
+
+        let logInBut = document.getElementById("log_in_button");
+        logInBut.addEventListener('click', EventsHandlers.handleLogIn);
+
+        let closeModalWin = document.getElementById("log_in_close_modal_window");
+        closeModalWin.addEventListener('click', EventsHandlers.handleCloseModalWin);
+
+        let confirmLogIn = document.getElementById("confirm_log_in");
+        confirmLogIn.addEventListener('click', EventsHandlers.handleConfirmLogIn);
+    }
+
+
+    let checkAuthorization = function (){
+        if (user !== null && (typeof user === "string")){
+            let logInButton = document.getElementById("log_in_button");
+            logInButton.textContent = user;
+        }
+    };
+
+    let showPhotoPosts = function (clearFeed, skip, top, filterConfig) {
+        if (clearFeed !== false) {
+            clear();
+            visiblePosts = 0;
+        }
+        skip = skip || 0;
+        top = top || 10;
+        module.getPhotoPosts(visiblePosts + skip, visiblePosts + top, filterConfig).forEach(function (value) {
+            let newPost = createPost(value);
+            if (newPost !== null) {
+                photoThreadHalf.appendChild(newPost);
+                visiblePosts++;
+            }
         });
     };
 
     let addPhotoPost = function (post) {
         if (module.addPhotoPost(post)) {
-            showPhotoPosts();
+            showPhotoPosts(true);
         }
     };
 
@@ -425,6 +481,7 @@ var DOMmodule = (function () {
             let remove = photoPosts.find(function (item) {
                 return item.getAttribute("id") === id;
             });
+            visiblePosts--;
             for (let i = 0; i < photoThreadHalf.childNodes.length; ++i) {
                 if (photoThreadHalf.childNodes[i] === remove) {
                     photoThreadHalf.removeChild(remove);
@@ -448,37 +505,18 @@ var DOMmodule = (function () {
         }
     };
 
-    let checkAuthorization = function (){
-        if (user !== null && (typeof user === "string")){
-            let logInButton = document.getElementById("log_in_button");
-            logInButton.textContent = user;
-            showPhotoPosts();
-        }
+    let initialActions = function () {
+        checkAuthorization();
+        initialUI();
     };
 
-
-    return {showPhotoPosts, addPhotoPost, removePhotoPost, editPhotoPost, checkAuthorization};
+    return {showPhotoPosts, addPhotoPost, removePhotoPost, editPhotoPost, initialActions, checkAuthorization};
 })();
 
-function testDOM() {
-    DOMmodule.checkAuthorization();
+function runDOM() {
+    DOMmodule.initialActions();
 
     DOMmodule.showPhotoPosts();
-
-    /*DOMmodule.addPhotoPost({
-            id: '21',
-            description: 'Тестовый текст.',
-            createdAt: new Date('2019-02-23T23:00:00'),
-            author: 'Денис',
-            photoLink: 'Photos\\Empty photo 1.png'
-        });*/
-
-    /*DOMmodule.removePhotoPost('6');*/
-
-    /*DOMmodule.editPhotoPost('9', {
-        description: "измененное описание.",
-		photoLink: 'Photos\\Empty photo 1.png'
-    });*/
 }
 
-testDOM();
+runDOM();

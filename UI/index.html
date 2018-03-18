@@ -26,39 +26,23 @@
 		</div>
 	</section>
 
+
+	<!-- LOG IN -->
+
+	<div class="log_in_modal_window" id="log_in_modal_window">
+		<div class="log_in_modal_content">
+			<input type="text" placeholder="Enter nickname" id="log_in_nickname" class="input_data_log_in button"></input>
+			<input type="text" placeholder="Enter password" id="log_in_password" class="input_data_log_in button"></input>
+			<button class="button" id="confirm_log_in">Log in</button>
+			<span class="log_in_close_modal_window" id="log_in_close_modal_window">&times;</span>
+		</div>
+	</div>
+
+
 	<!-- PHOTO FEED -->
 
 	<section class="photo_feed">
-		<div class="photo_thread_half" id="photo_thread_half">
-
-			<!-- <div class="photo_post">
-				<div class="photo_post_header">
-					<div class="author_name">Example post</div>
-				</div>
-				<div class="photo_post_header">
-					<div class="data">25.02.2018</div>
-				</div>
-				<img src="Photos\Empty photo 1.png" alt="Sorry! No photo." width="100%"> 
-				<div class="post_control">
-					<button class="post_control_button">
-						<img src="Like.png" alt="Sorry! No photo." height="100%">
-					</button>
-				</div>
-				<div class="post_control">
-					<button class="post_control_button">
-						<img src="Edit.png" alt="Sorry! No photo." height="100%">
-					</button>
-				</div>
-				<div class="post_control">
-					<button class="post_control_button">
-						<img src="Remove.png" alt="Sorry! No photo." height="100%">
-					</button>
-				</div>
-				
-				<div class="description_hashtags">Description and hashtags...</div>
-			</div> -->
-
-		</div>
+		<div class="photo_thread_half" id="photo_thread_half"></div>
 
 		<div class="search_settings_half">
 			<div class="search_settings">
@@ -68,13 +52,21 @@
 				<input type="text" class="setting_input button" placeholder="Hashtags"></input>
 			</div>
 			<div class="search_settings">
-				<input type="date" class="setting_input button"></input>
+				<input type="date" class="setting_input button" id="search_date"></input>
 			</div>
 			<div class="search_settings">
-				<input type="text" class="setting_input button" placeholder="Author name"></input>
+				<input type="text" class="setting_input button" placeholder="Author name" id="search_author"></input>
+			</div>
+			<div class="search_settings">
+				<button class="reset_settings_button button" id="reset_settings_button">Reset</button>
 			</div>
 		</div>
+
+		<div class="more_photoposts">
+			<button class="button" id="show_more_posts">More</button>
+		</div>
 	</section>
+
 
 	<!-- FOOTER -->
 
