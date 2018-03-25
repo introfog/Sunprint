@@ -254,7 +254,7 @@ var module = (function () {
         }
     };
 
-    return {getPhotoPosts, getPhotoPost, validatePhotoPost, addPhotoPost, editPhotoPost, removePhotoPost};
+    return {getPhotoPosts, getPhotoPost, validatePhotoPost, addPhotoPost, editPhotoPost, removePhotoPost, photoPosts};
 })();
 
 
@@ -285,8 +285,10 @@ var EventsHandlers = (function (){
 
     let handleLogIn = function () {
         if (user === null){
-            let modalWindow = document.getElementById("log_in_modal_window");
+            let modalWindow = document.getElementById("modal_window");
             modalWindow.style.display = "block";
+            let content = document.getElementById("log_in_modal_content");
+            content.style.display = "block";
         }
         else{
             user = null;
@@ -298,8 +300,14 @@ var EventsHandlers = (function (){
     };
 
     let handleCloseModalWin = function () {
-        let modalWindow = document.getElementById("log_in_modal_window");
+        let modalWindow = document.getElementById("modal_window");
         modalWindow.style.display = "none";
+        let logInContent = document.getElementById("log_in_modal_content");
+        logInContent.style.display = "none";
+        let addPhotoContent = document.getElementById("add_edit_modal_content");
+        addPhotoContent.style.display = "none";
+        document.getElementById("input_description").value = "";
+        document.getElementById("drag_drop_photo").textContent = "Drop photo here";
     };
 
     let handleConfirmLogIn = function () {
@@ -311,20 +319,98 @@ var EventsHandlers = (function (){
             logInBut.innerText = user;
             DOMmodule.checkAuthorization();
             DOMmodule.showPhotoPosts();
-            let modalWindow = document.getElementById("log_in_modal_window");
-            modalWindow.style.display = "none";
+            handleCloseModalWin();
             nickname.value = "";
             password.value = "";
         }
     };
 
+    let handleAddPhotoPost = function () {
+        let modalWindow = document.getElementById("modal_window");
+        modalWindow.style.display = "block";
+        let content = document.getElementById("add_edit_modal_content");
+        content.style.display = "block";
+        isEditPost = false;
+        newPost.photoLink = 'Photos\\';
+    };
+
+    let handleFileSelect = function (event){
+        event.stopPropagation();
+        event.preventDefault();
+
+        let files = event.dataTransfer.files; // FileList object.
+        let file = files[0];
+        if (file.type.indexOf("image") !== -1) {
+            newPost.photoLink = 'Photos\\' + file.name;
+            let dragDropPhoto = document.getElementById("drag_drop_photo");
+            dragDropPhoto.textContent = file.name;
+        }
+        else{
+            alert("You can drop only image.");
+        }
+    };
+
+    let handleDragOver = function (event){
+        event.stopPropagation();
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'copy';
+    };
+
+    let handleConfirmAddEdit = function () {
+        if (newPost.photoLink === 'Photos\\'){
+            alert("Drop photo!");
+        }
+        else{
+            if (!isEditPost) {
+                newPost.id = "" + (module.photoPosts.length + 1);
+                newPost.author = user;
+                newPost.createdAt = new Date();
+                newPost.description = document.getElementById("input_description").value;
+
+                let clone = {}; // новый пустой объект
+                for (let key in newPost) {
+                    clone[key] = newPost[key];
+                }
+                DOMmodule.addPhotoPost(clone);
+
+            }
+            else{
+                newPost.description = document.getElementById("input_description").value;
+                DOMmodule.editPhotoPost(newPost.id, newPost);
+            }
+            handleCloseModalWin();
+        }
+    };
+
+    let handleEditPhotoPost = function (id) {
+        let modalWindow = document.getElementById("modal_window");
+        modalWindow.style.display = "block";
+        let content = document.getElementById("add_edit_modal_content");
+        content.style.display = "block";
+
+        isEditPost = true;
+
+        newPost = module.getPhotoPost(id);
+        document.getElementById("input_description").value = newPost.description;
+        document.getElementById("drag_drop_photo").textContent = newPost.photoLink;
+    };
+
     return {handleRemovePhotoPost, handleSearchAuthor, handleResetSettings, handleSearchDate, handleShowMorePosts,
-    handleLogIn, handleCloseModalWin, handleConfirmLogIn};
+    handleLogIn, handleCloseModalWin, handleConfirmLogIn, handleAddPhotoPost, handleFileSelect, handleDragOver,
+    handleConfirmAddEdit, handleEditPhotoPost};
 })();
 
 
-var user = "introfog";
+let user = "introfog";
 let visiblePosts = 0;
+let isEditPost = false;
+let newPost = {
+        id: '',
+        description: '',
+        createdAt: new Date(),
+        author: '',
+        photoLink: 'Photos\\'
+};
 
 var DOMmodule = (function () {
     let photoThreadHalf = document.getElementById("photo_thread_half");
@@ -382,6 +468,9 @@ var DOMmodule = (function () {
             div.setAttribute("class", "post_control");
             button = document.createElement("button");
             button.setAttribute("class", "post_control_button");
+            button.addEventListener('click', function (event) {
+                EventsHandlers.handleEditPhotoPost (value.id + "");
+            });
             img = document.createElement("img");
             img.setAttribute("src", "Edit.png");
             img.setAttribute("alt", "Sorry! No photo.");
@@ -439,18 +528,35 @@ var DOMmodule = (function () {
         let logInBut = document.getElementById("log_in_button");
         logInBut.addEventListener('click', EventsHandlers.handleLogIn);
 
-        let closeModalWin = document.getElementById("log_in_close_modal_window");
-        closeModalWin.addEventListener('click', EventsHandlers.handleCloseModalWin);
+
+        let closeModalWin = document.getElementsByClassName("close_modal_window");
+        let arrayCloseModalWim = Array.prototype.slice.call (closeModalWin);
+        arrayCloseModalWim.forEach((node)=>{node.addEventListener('click', EventsHandlers.handleCloseModalWin);});
 
         let confirmLogIn = document.getElementById("confirm_log_in");
         confirmLogIn.addEventListener('click', EventsHandlers.handleConfirmLogIn);
+
+        let addPhotoButton = document.getElementById("add_photo_button");
+        addPhotoButton.addEventListener('click', EventsHandlers.handleAddPhotoPost);
+
+        let dragDropPhoto = document.getElementById("drag_drop_photo");
+        dragDropPhoto.addEventListener('dragover', EventsHandlers.handleDragOver, false);
+        dragDropPhoto.addEventListener('drop', EventsHandlers.handleFileSelect, false);
+
+        let confirmEditPost = document.getElementById("confirm_add_edit_post");
+        confirmEditPost.addEventListener('click', EventsHandlers.handleConfirmAddEdit);
     }
 
 
     let checkAuthorization = function (){
+        let addPhotoButton = document.getElementById("add_photo_button");
         if (user !== null && (typeof user === "string")){
             let logInButton = document.getElementById("log_in_button");
             logInButton.textContent = user;
+            addPhotoButton.style.display = "block";
+        }
+        else{
+            addPhotoButton.style.display = "none";
         }
     };
 
@@ -497,7 +603,12 @@ var DOMmodule = (function () {
                 return item.getAttribute("id") === id;
             });
             if ("description" in photoPost && (typeof photoPost.description === "string") && photoPost.description.length < 200) {
-                edit.childNodes[4].textContent = photoPost.description;
+                if (user === null) {
+                    edit.childNodes[4].textContent = photoPost.description;
+                }
+                else{
+                    edit.childNodes[6].textContent = photoPost.description;
+                }
             }
             if ("photoLink" in photoPost && (typeof photoPost.photoLink === "string")) {
                 edit.childNodes[2].setAttribute("src", photoPost.photoLink);
