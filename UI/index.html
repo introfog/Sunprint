@@ -19,7 +19,7 @@
 			<div class="project_name">Sunprint</div>
 		</div>
 		<div class="header_column">
-			<button class="add_photo_button button">Add</button>
+			<button class="add_photo_button button" id="add_photo_button">Add</button>
 		</div>
 		<div class="header_column">
 			<button class="log_in_button button" id="log_in_button">Log in</button>
@@ -29,12 +29,19 @@
 
 	<!-- LOG IN -->
 
-	<div class="log_in_modal_window" id="log_in_modal_window">
-		<div class="log_in_modal_content">
+	<div class="modal_window" id="modal_window">
+		<div class="log_in_modal_content" id="log_in_modal_content">
 			<input type="text" placeholder="Enter nickname" id="log_in_nickname" class="input_data_log_in button"></input>
 			<input type="text" placeholder="Enter password" id="log_in_password" class="input_data_log_in button"></input>
 			<button class="button" id="confirm_log_in">Log in</button>
-			<span class="log_in_close_modal_window" id="log_in_close_modal_window">&times;</span>
+			<span class="close_modal_window">&times;</span>
+		</div>
+
+		<div class="add_edit_modal_content" id="add_edit_modal_content">
+			<div class="drag_drop_photo" id="drag_drop_photo">Drop photo here</div>
+			<textarea class="input_description" cols="40" rows="3" placeholder="Enter description" id="input_description"></textarea>
+			<button class="button confirm_add_edit_post" id="confirm_add_edit_post">Confirm</button>
+			<span class="close_modal_window">&times;</span>
 		</div>
 	</div>
 

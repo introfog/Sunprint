@@ -212,7 +212,7 @@ body{
 }
 
 
-.log_in_modal_window{
+.modal_window{
 	display: none;
 	position: fixed;;
 	z-index: 1000;
@@ -225,6 +225,7 @@ body{
 }
 
 .log_in_modal_content{
+	display: none;
 	background-color: rgba(150, 150, 255, 0.7);
 	margin: 15% auto;
 	padding: 20px;
@@ -232,9 +233,11 @@ body{
 	width: 60%;
 }
 
-.log_in_close_modal_window{
+.close_modal_window{
 	color: rgb(255, 255, 255);
 	float: right;
+	right: 0;
+	top: 0;
 	font-size: 28px;
 	font-weight: bold;
 }
@@ -245,4 +248,38 @@ body{
 
 	margin-top: 20px;
 	background-color: rgba(255, 150, 150, 0.8);
+}
+
+.add_edit_modal_content{
+	display: none;
+	background-color: rgba(150, 150, 255, 0.7);
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid;
+	width: 60%;
+	height: 200px;
+}
+
+.input_description{
+	margin-left: 220px;
+	float: left;
+	display: flex;
+	position: fixed;
+
+}
+
+.drag_drop_photo{
+	text-align: center;
+	line-height: 200px;
+	color: rgba(255, 255, 255, 0.4);
+
+	float: left;
+	width: 190px;
+	height: 100%;
+	background-color: rgba(255, 150, 150, 0.7);
+}
+
+.confirm_add_edit_post{
+	margin-left: 20px;
+	margin-top: 175px;
 }
