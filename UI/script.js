@@ -1,169 +1,25 @@
 var module = (function () {
-    let photoPosts = [
-        {
-            id: '1',
-            description: 'Женская сборная Беларуси выиграла эстафету.',
-            createdAt: new Date('2018-02-23T23:00:00'),
-            author: 'Денис',
-            photoLink: 'Photos\\Empty photo 1.png'
-        },
-        {
-            id: '2',
-            description: 'Сегодня очень снежно.',
-            createdAt: new Date('2018-03-23T23:00:00'),
-            author: 'Сергей',
-            photoLink: 'Photos\\Empty photo 2.png'
-        },
-        {
-            id: '3',
-            description: 'На улице жара неимоверная.',
-            createdAt: new Date('2017-10-23T23:00:15'),
-            author: 'Максим',
-            photoLink: 'Photos\\Empty photo 3.png'
-        },
-        {
-            id: '4',
-            description: 'Поеду в Питер завтра.',
-            createdAt: new Date('2016-02-23T23:00:00'),
-            author: 'Катя',
-            photoLink: 'Photos\\Empty photo 4.png'
-        },
-        {
-            id: '5',
-            description: 'Завтра собираюсь в путешествие, кто со мной?',
-            createdAt: new Date('2018-05-23T23:00:00'),
-            author: 'Ольга',
-            photoLink: 'Photos\\Empty photo 5.png'
-        },
-        {
-            id: '6',
-            description: 'Люблю гулять под дождем, очень бодрит кстати.',
-            createdAt: new Date('2018-12-23T23:00:00'),
-            author: 'Сергей3000',
-            photoLink: 'Photos\\Empty photo 6.png'
-        },
-        {
-            id: '7',
-            description: 'Не знаю что написать, идеи закончились.',
-            createdAt: new Date('2018-02-13T23:00:00'),
-            author: 'Киллер2007',
-            photoLink: 'Photos\\Empty photo 7.png'
-        },
-        {
-            id: '8',
-            description: 'Какое-то описание.',
-            createdAt: new Date('2018-02-23T15:00:00'),
-            author: 'Димончик',
-            photoLink: 'Photos\\Empty photo 8.png'
-        },
-        {
-            id: '9',
-            description: 'Это только 9-ое описание, а идей нет.',
-            createdAt: new Date('2018-09-23T23:00:00'),
-            author: 'Димка',
-            photoLink: 'Photos\\Empty photo 9.png'
-        },
-        {
-            id: '10',
-            description: 'Я родился.',
-            createdAt: new Date('1999-04-27T10:30:01'),
-            author: 'Дмитрий Михайлович',
-            photoLink: 'Photos\\Empty photo 10.png'
-        },
-        {
-            id: '11',
-            description: 'Я побывал в 3 странах за месяц летом.',
-            createdAt: new Date('2010-10-23T23:00:00'),
-            author: 'Митя',
-            photoLink: 'Photos\\Empty photo 11.png'
-        },
-        {
-            id: '12',
-            description: 'Вчера вечером я был в городе.',
-            createdAt: new Date('2016-02-23T13:34:00'),
-            author: 'Димка',
-            photoLink: 'Photos\\Empty photo 12.png'
-        },
-        {
-            id: '13',
-            description: 'Ребята, намечается тусовка 15 марта, кто пойдет?',
-            createdAt: new Date('2018-03-25T13:00:00'),
-            author: 'Димка',
-            photoLink: 'Photos\\Empty photo 13.png'
-        },
-        {
-            id: '14',
-            description: 'Вчера в Минске было очень много ДТП и снега было по колено.',
-            createdAt: new Date('2017-01-23T23:00:00'),
-            author: 'Дима',
-            photoLink: 'Photos\\Empty photo 14.png'
-        },
-        {
-            id: '15',
-            description: 'А какие книги читали вы? Какие любимые жанры?',
-            createdAt: new Date('2018-04-23T13:00:00'),
-            author: 'Платон',
-            photoLink: 'Photos\\Empty photo 15.png'
-        },
-        {
-            id: '16',
-            description: 'Можно ли сделать пустое описание?',
-            createdAt: new Date('2018-03-12T23:00:00'),
-            author: 'Аристарх',
-            photoLink: 'Photos\\Empty photo 16.png'
-        },
-        {
-            id: '17',
-            description: 'Моя фантазия на сиходе, а брать чьи-то реальные описания долго.',
-            createdAt: new Date('2013-02-01T23:00:00'),
-            author: 'Михаил',
-            photoLink: 'Photos\\Empty photo 17.png'
-        },
-        {
-            id: '18',
-            description: 'У меня еще куча дел, а времени не так уж и много.',
-            createdAt: new Date('2011-02-23T12:43:00'),
-            author: 'Евпатий',
-            photoLink: 'Photos\\Empty photo 18.png'
-        },
-        {
-            id: '19',
-            description: 'Завтра в универ, но греет душу что в четверг выходной.',
-            createdAt: new Date('2018-03-24T16:00:00'),
-            author: 'Марк',
-            photoLink: 'Photos\\Empty photo 19.png'
-        },
-        {
-            id: '20',
-            description: 'Фух, вот и закончил с описаниями.',
-            createdAt: new Date('1998-01-26T23:00:00'),
-            author: 'Игнатий',
-            photoLink: 'Photos\\Empty photo 20.png'
-        }
-    ];
-
-
     let getPhotoPosts = function (skip, top, filterConfig) {
         skip = skip || 0;
         top = top || 10;
 
         let result = [];
         if (filterConfig !== undefined && "author" in filterConfig) {
-            photoPosts.forEach(function (value) {
+            photoPostsDate.forEach(function (value) {
                 if (value.author === filterConfig.author) {
                     result.push(value);
                 }
             });
         }
         else if (filterConfig !== undefined && "createdAt" in filterConfig){
-            photoPosts.forEach(function (value) {
+            photoPostsDate.forEach(function (value) {
                 if (value.createdAt > filterConfig.createdAt) {
                     result.push(value);
                 }
             });
         }
         else {
-            result = photoPosts.slice();
+            result = photoPostsDate.slice();
         }
 
         result.sort(function (a, b) {
@@ -175,7 +31,7 @@ var module = (function () {
     };
 
     let getPhotoPost = function (id) {
-        return photoPosts.find(function (item) {
+        return photoPostsDate.find(function (item) {
             return item.id === id;
         });
     };
@@ -205,8 +61,8 @@ var module = (function () {
 
     let addPhotoPost = function (post) {
         if (validatePhotoPost(post)) {
-            photoPosts.push(post);
-            photoPosts.sort(function (a, b) {
+            photoPostsDate.push(post);
+            photoPostsDate.sort(function (a, b) {
                 return b.createdAt - a.createdAt;
             });
             return true;
@@ -219,7 +75,7 @@ var module = (function () {
             return false;
         }
 
-        let result = photoPosts.find(function (item) {
+        let result = photoPostsDate.find(function (item) {
             return item.id === id;
         });
 
@@ -239,7 +95,7 @@ var module = (function () {
 
     let removePhotoPost = function (id) {
         let result = null;
-        photoPosts.forEach(function (item) {
+        photoPostsDate.forEach(function (item) {
             if (item.id === id) {
                 result = item;
             }
@@ -249,13 +105,156 @@ var module = (function () {
             return false;
         }
         else {
-            photoPosts.splice(photoPosts.indexOf(result), 1);
+            photoPostsDate.splice(photoPostsDate.indexOf(result), 1);
             return true;
         }
     };
 
-    return {getPhotoPosts, getPhotoPost, validatePhotoPost, addPhotoPost, editPhotoPost, removePhotoPost, photoPosts};
+    return {getPhotoPosts, getPhotoPost, validatePhotoPost, addPhotoPost, editPhotoPost, removePhotoPost};
 })();
+
+var photoPostsDate = [
+    /*{
+         id: "1",
+         description: 'Женская сборная Беларуси выиграла эстафету.',
+         createdAt: new Date('2018-02-23T23:00:00'),
+         author: 'Денис',
+         photoLink: 'Photos\\Empty photo 1.png'
+     },
+     {
+         id: "2",
+         description: 'Сегодня очень снежно.',
+         createdAt: new Date('2018-03-23T23:00:00'),
+         author: 'Сергей',
+         photoLink: 'Photos\\Empty photo 2.png'
+     },
+     {
+         id: "3",
+         description: 'На улице жара неимоверная.',
+         createdAt: new Date('2017-10-23T23:00:15'),
+         author: 'Максим',
+         photoLink: 'Photos\\Empty photo 3.png'
+     },
+     {
+         id: "4",
+         description: 'Поеду в Питер завтра.',
+         createdAt: new Date('2016-02-23T23:00:00'),
+         author: 'Катя',
+         photoLink: 'Photos\\Empty photo 4.png'
+     },
+     {
+         id: "5",
+         description: 'Завтра собираюсь в путешествие, кто со мной?',
+         createdAt: new Date('2018-05-23T23:00:00'),
+         author: 'Ольга',
+         photoLink: 'Photos\\Empty photo 5.png'
+     },
+     {
+         id: "6",
+         description: 'Люблю гулять под дождем, очень бодрит кстати.',
+         createdAt: new Date('2018-12-23T23:00:00'),
+         author: 'Сергей3000',
+         photoLink: 'Photos\\Empty photo 6.png'
+     },
+     {
+         id: "7",
+         description: 'Не знаю что написать, идеи закончились.',
+         createdAt: new Date('2018-02-13T23:00:00'),
+         author: 'Киллер2007',
+         photoLink: 'Photos\\Empty photo 7.png'
+     },
+     {
+         id: "8",
+         description: 'Какое-то описание.',
+         createdAt: new Date('2018-02-23T15:00:00'),
+         author: 'Димончик',
+         photoLink: 'Photos\\Empty photo 8.png'
+     },
+     {
+         id: "9",
+         description: 'Это только 9-ое описание, а идей нет.',
+         createdAt: new Date('2018-09-23T23:00:00'),
+         author: 'Димка',
+         photoLink: 'Photos\\Empty photo 9.png'
+     },
+     {
+         id: "10",
+         description: 'Я родился.',
+         createdAt: new Date('1999-04-27T10:30:01'),
+         author: 'Дмитрий Михайлович',
+         photoLink: 'Photos\\Empty photo 10.png'
+     },
+     {
+         id: "11",
+         description: 'Я побывал в 3 странах за месяц летом.',
+         createdAt: new Date('2010-10-23T23:00:00'),
+         author: 'Митя',
+         photoLink: 'Photos\\Empty photo 11.png'
+     },
+     {
+         id: "12",
+         description: 'Вчера вечером я был в городе.',
+         createdAt: new Date('2016-02-23T13:34:00'),
+         author: 'Димка',
+         photoLink: 'Photos\\Empty photo 12.png'
+     },
+     {
+         id: "13",
+         description: 'Ребята, намечается тусовка 15 марта, кто пойдет?',
+         createdAt: new Date('2018-03-25T13:00:00'),
+         author: 'Димка',
+         photoLink: 'Photos\\Empty photo 13.png'
+     },
+     {
+         id: "14",
+         description: 'Вчера в Минске было очень много ДТП и снега было по колено.',
+         createdAt: new Date('2017-01-23T23:00:00'),
+         author: 'Дима',
+         photoLink: 'Photos\\Empty photo 14.png'
+     },
+     {
+         id: "15",
+         description: 'А какие книги читали вы? Какие любимые жанры?',
+         createdAt: new Date('2018-04-23T13:00:00'),
+         author: 'Платон',
+         photoLink: 'Photos\\Empty photo 15.png'
+     },
+     {
+         id: "16",
+         description: 'Можно ли сделать пустое описание?',
+         createdAt: new Date('2018-03-12T23:00:00'),
+         author: 'Аристарх',
+         photoLink: 'Photos\\Empty photo 16.png'
+     },
+     {
+         id: "17",
+         description: 'Моя фантазия на сиходе, а брать чьи-то реальные описания долго.',
+         createdAt: new Date('2013-02-01T23:00:00'),
+         author: 'Михаил',
+         photoLink: 'Photos\\Empty photo 17.png'
+     },
+     {
+         id: "18",
+         description: 'У меня еще куча дел, а времени не так уж и много.',
+         createdAt: new Date('2011-02-23T12:43:00'),
+         author: 'Евпатий',
+         photoLink: 'Photos\\Empty photo 18.png'
+     },
+     {
+         id: "19",
+         description: 'Завтра в универ, но греет душу что в четверг выходной.',
+         createdAt: new Date('2018-03-24T16:00:00'),
+         author: 'Марк',
+         photoLink: 'Photos\\Empty photo 19.png'
+     },
+     {
+         id: "20",
+         description: 'Фух, вот и закончил с описаниями.',
+         createdAt: new Date('1998-01-26T23:00:00'),
+         author: 'Игнатий',
+         photoLink: 'Photos\\Empty photo 20.png'
+     }*/
+];
 
 
 var EventsHandlers = (function (){
@@ -292,6 +291,7 @@ var EventsHandlers = (function (){
         }
         else{
             user = null;
+            localStorage.setItem("userName", user);
             let logInBut = document.getElementById("log_in_button");
             logInBut.innerText = "Log in";
             DOMmodule.checkAuthorization();
@@ -313,8 +313,13 @@ var EventsHandlers = (function (){
     let handleConfirmLogIn = function () {
         let nickname = document.getElementById("log_in_nickname");
         let password = document.getElementById("log_in_password");
+        if (nickname.value === "null"){
+            alert("Change other name");
+            return;
+        }
         if (nickname.value !== ""){
             user = nickname.value;
+            localStorage.setItem("userName", user);
             let logInBut = document.getElementById("log_in_button");
             logInBut.innerText = user;
             DOMmodule.checkAuthorization();
@@ -362,7 +367,7 @@ var EventsHandlers = (function (){
         }
         else{
             if (!isEditPost) {
-                newPost.id = "" + (module.photoPosts.length + 1);
+                newPost.id = "" + (photoPostsDate.length + 1);
                 newPost.author = user;
                 newPost.createdAt = new Date();
                 newPost.description = document.getElementById("input_description").value;
@@ -372,7 +377,6 @@ var EventsHandlers = (function (){
                     clone[key] = newPost[key];
                 }
                 DOMmodule.addPhotoPost(clone);
-
             }
             else{
                 newPost.description = document.getElementById("input_description").value;
@@ -401,7 +405,7 @@ var EventsHandlers = (function (){
 })();
 
 
-let user = "introfog";
+let user;
 let visiblePosts = 0;
 let isEditPost = false;
 let newPost = {
@@ -547,6 +551,22 @@ var DOMmodule = (function () {
         confirmEditPost.addEventListener('click', EventsHandlers.handleConfirmAddEdit);
     }
 
+    function saveDataInLocalStorage() {
+        localStorage.setItem("photoPosts", JSON.stringify(photoPostsDate));
+    }
+
+    function initialDataFromLocalStorage() {
+        user = localStorage.getItem("userName");
+        if (user === "null"){
+            user = null;
+        }
+
+        photoPostsDate = JSON.parse(localStorage.getItem("photoPosts")).slice();
+        photoPostsDate.forEach((post)=>{
+            post.createdAt = new Date (post.createdAt);
+        });
+    }
+
 
     let checkAuthorization = function (){
         let addPhotoButton = document.getElementById("add_photo_button");
@@ -567,6 +587,7 @@ var DOMmodule = (function () {
         }
         skip = skip || 0;
         top = top || 10;
+
         module.getPhotoPosts(visiblePosts + skip, visiblePosts + top, filterConfig).forEach(function (value) {
             let newPost = createPost(value);
             if (newPost !== null) {
@@ -579,6 +600,7 @@ var DOMmodule = (function () {
     let addPhotoPost = function (post) {
         if (module.addPhotoPost(post)) {
             showPhotoPosts(true);
+            saveDataInLocalStorage();
         }
     };
 
@@ -594,6 +616,7 @@ var DOMmodule = (function () {
                 }
             }
             photoPosts.splice(photoPosts.indexOf(remove), 1);
+            saveDataInLocalStorage();
         }
     };
 
@@ -613,10 +636,12 @@ var DOMmodule = (function () {
             if ("photoLink" in photoPost && (typeof photoPost.photoLink === "string")) {
                 edit.childNodes[2].setAttribute("src", photoPost.photoLink);
             }
+            saveDataInLocalStorage();
         }
     };
 
     let initialActions = function () {
+        initialDataFromLocalStorage();
         checkAuthorization();
         initialUI();
     };
@@ -626,7 +651,6 @@ var DOMmodule = (function () {
 
 function runDOM() {
     DOMmodule.initialActions();
-
     DOMmodule.showPhotoPosts();
 }
 
