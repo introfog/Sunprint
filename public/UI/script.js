@@ -647,6 +647,8 @@ var DOMmodule = (function () {
     };
 
     let initialActions = function () {
+
+
         initialDataFromLocalStorage();
         checkAuthorization();
         initialUI();

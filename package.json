@@ -1,0 +1,22 @@
+{
+  "name": "Sunprint",
+  "version": "1.0.0",
+  "description": "Photoportal",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/introfog/Sunprint.git"
+  },
+  "author": "introfog",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/introfog/Sunprint/issues"
+  },
+  "homepage": "https://github.com/introfog/Sunprint#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
