@@ -113,8 +113,10 @@ var module = (function () {
     return {getPhotoPosts, getPhotoPost, validatePhotoPost, addPhotoPost, editPhotoPost, removePhotoPost};
 })();
 
-var photoPostsDate = [
-    /*{
+var photoPostsDate = [];
+
+var initialPostsDate = [
+    {
          id: "1",
          description: 'Женская сборная Беларуси выиграла эстафету.',
          createdAt: new Date('2018-02-23T23:00:00'),
@@ -253,9 +255,8 @@ var photoPostsDate = [
          createdAt: new Date('1998-01-26T23:00:00'),
          author: 'Игнатий',
          photoLink: 'Photos\\Empty photo 20.png'
-     }*/
+     }
 ];
-
 
 var EventsHandlers = (function (){
     let handleRemovePhotoPost = function () {
@@ -561,7 +562,12 @@ var DOMmodule = (function () {
             user = null;
         }
 
-        photoPostsDate = JSON.parse(localStorage.getItem("photoPosts")).slice();
+        photoPostsDate = JSON.parse(localStorage.getItem("photoPosts"));
+        if (photoPostsDate === null){
+            localStorage.setItem("photoPosts", JSON.stringify(initialPostsDate));
+            initialDataFromLocalStorage();
+        }
+        photoPostsDate = photoPostsDate.slice();
         photoPostsDate.forEach((post)=>{
             post.createdAt = new Date (post.createdAt);
         });
