@@ -155,7 +155,7 @@ var initialPostsDate = [
          id: "6",
          description: 'Люблю гулять под дождем, очень бодрит кстати.',
          createdAt: new Date('2018-12-23T23:00:00'),
-         author: 'Сергей3000',
+         author: 'Сергей3001',
          photoLink: 'Photos\\Photo6.png'
      },
      {
@@ -368,7 +368,14 @@ var EventsHandlers = (function (){
         }
         else{
             if (!isEditPost) {
-                newPost.id = "" + (photoPostsDate.length + 1);
+                let maxID = -1;
+                photoPostsDate.forEach ((post) => {
+                    if (Number (post.id) > maxID){
+                        maxID = Number (post.id);
+                    }
+                });
+
+                newPost.id = "" + (maxID + 1);
                 newPost.author = user;
                 newPost.createdAt = new Date();
                 newPost.description = document.getElementById("input_description").value;
@@ -416,6 +423,46 @@ let newPost = {
         author: '',
         photoLink: 'Photos\\'
 };
+
+
+var server = (function () {
+    let readPostsJSON = function (){
+        let result = [];
+        let reqServer = new XMLHttpRequest();
+        reqServer.open('GET', '/read', false);
+        reqServer.onreadystatechange = () => {
+            result = JSON.parse(reqServer.responseText);
+        };
+        reqServer.send();
+
+        return result;
+    };
+
+    let initialPostsJSON = function (){
+        let reqServer = new XMLHttpRequest();
+        reqServer.open('POST', '/write', false);
+        reqServer.setRequestHeader('Content-Type', 'application/json');
+
+        /*reqServer.onreadystatechange = () => {
+            if (reqServer.readyState === 4 && reqServer.status === 200) {
+                console.log(reqServer.responseText);
+            }
+        };*/
+        reqServer.send(JSON.stringify(initialPostsDate));
+    };
+
+    let writePostsJSON = function (posts){
+        let reqServer = new XMLHttpRequest();
+        reqServer.open('POST', '/write', false);
+        reqServer.setRequestHeader('Content-Type', 'application/json');
+
+        reqServer.send(JSON.stringify(posts));
+    };
+
+   
+    return {readPostsJSON, initialPostsJSON};
+})();
+
 
 var DOMmodule = (function () {
     let photoThreadHalf = document.getElementById("photo_thread_half");
@@ -552,22 +599,15 @@ var DOMmodule = (function () {
         confirmEditPost.addEventListener('click', EventsHandlers.handleConfirmAddEdit);
     }
 
-    function saveDataInLocalStorage() {
-        localStorage.setItem("photoPosts", JSON.stringify(initialPostsDate));
-    }
-
-    function initialDataFromLocalStorage() {
+    function initialDataFromServer() {
         user = localStorage.getItem("userName");
         if (user === "null"){
             user = null;
         }
 
-        photoPostsDate = JSON.parse(localStorage.getItem("photoPosts"));
-        if (photoPostsDate === null){
-            saveDataInLocalStorage();
-            initialDataFromLocalStorage();
-        }
-        photoPostsDate = photoPostsDate.slice();
+        //server.initialPostsJSON ();
+
+        photoPostsDate = server.readPostsJSON ();
         photoPostsDate.forEach((post)=>{
             post.createdAt = new Date (post.createdAt);
         });
@@ -591,10 +631,30 @@ var DOMmodule = (function () {
             clear();
             visiblePosts = 0;
         }
+
         skip = skip || 0;
         top = top || 10;
 
-        module.getPhotoPosts(visiblePosts + skip, visiblePosts + top, filterConfig).forEach(function (value) {
+
+        let data = '?skip=' + encodeURIComponent(visiblePosts + skip) + '&top=' + encodeURIComponent(visiblePosts + top);
+        let body = filterConfig;
+
+        let posts;
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '/getPhotoPosts/' + data, false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = () => {
+            if (xhr.status === 200) {
+                posts = xhr.responseText;
+            }
+        };
+        xhr.send(body);
+
+        posts = JSON.parse (posts);
+        posts.forEach((post)=>{
+            post.createdAt = new Date (post.createdAt);
+        });
+        posts.forEach(function (value) {
             let newPost = createPost(value);
             if (newPost !== null) {
                 photoThreadHalf.appendChild(newPost);
@@ -604,50 +664,67 @@ var DOMmodule = (function () {
     };
 
     let addPhotoPost = function (post) {
-        if (module.addPhotoPost(post)) {
-            showPhotoPosts(true);
-            saveDataInLocalStorage();
-        }
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '/addPhotoPost/', false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = () => {
+            if (xhr.status === 200) {
+                showPhotoPosts(true);
+            }
+        };
+        xhr.send(JSON.stringify (post));
+        
     };
 
     let removePhotoPost = function (id) {
-        if (module.removePhotoPost(id)) {
-            let remove = photoPosts.find(function (item) {
-                return item.getAttribute("id") === id;
-            });
-            visiblePosts--;
-            for (let i = 0; i < photoThreadHalf.childNodes.length; ++i) {
-                if (photoThreadHalf.childNodes[i] === remove) {
-                    photoThreadHalf.removeChild(remove);
-                }
+        let xhr = new XMLHttpRequest();
+        xhr.open('DELETE', '/removePhotoPost/?id=' + id, false);
+        xhr.send();
+
+        photoPostsDate = server.readPostsJSON ();
+
+        let remove = photoPosts.find(function (item) {
+            return item.getAttribute("id") === id;
+        });
+        visiblePosts--;
+        for (let i = 0; i < photoThreadHalf.childNodes.length; ++i) {
+            if (photoThreadHalf.childNodes[i] === remove) {
+                photoThreadHalf.removeChild(remove);
             }
-            photoPosts.splice(photoPosts.indexOf(remove), 1);
-            saveDataInLocalStorage();
         }
+        photoPosts.splice(photoPosts.indexOf(remove), 1);
     };
 
     let editPhotoPost = function (id, photoPost) {
-        if (module.editPhotoPost(id, photoPost)) {
-            let edit = photoPosts.find(function (item) {
-                return item.getAttribute("id") === id;
-            });
-            if ("description" in photoPost && (typeof photoPost.description === "string") && photoPost.description.length < 200) {
-                if (user === null) {
-                    edit.childNodes[4].textContent = photoPost.description;
+        let data = '?id=' + encodeURIComponent(id);
+        let body = JSON.stringify (photoPost);
+
+        let xhr = new XMLHttpRequest();
+        xhr.open('PUT', '/editPhotoPost/' + data, false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = () => {
+            if (xhr.status === 200) {
+                let edit = photoPosts.find(function (item) {
+                    return item.getAttribute("id") === id;
+                });
+                if ("description" in photoPost && (typeof photoPost.description === "string") && photoPost.description.length < 200) {
+                    if (user === null) {
+                        edit.childNodes[4].textContent = photoPost.description;
+                    }
+                    else{
+                        edit.childNodes[6].textContent = photoPost.description;
+                    }
                 }
-                else{
-                    edit.childNodes[6].textContent = photoPost.description;
+                if ("photoLink" in photoPost && (typeof photoPost.photoLink === "string")) {
+                    edit.childNodes[2].setAttribute("src", photoPost.photoLink);
                 }
             }
-            if ("photoLink" in photoPost && (typeof photoPost.photoLink === "string")) {
-                edit.childNodes[2].setAttribute("src", photoPost.photoLink);
-            }
-            saveDataInLocalStorage();
-        }
+        };
+        xhr.send(body);
     };
 
     let initialActions = function () {
-        initialDataFromLocalStorage();
+        initialDataFromServer();
         checkAuthorization();
         initialUI();
     };

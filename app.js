@@ -3,7 +3,7 @@ const fs=require('fs');
 const app = express();
 const parser = require('body-parser');
 
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public/UI/'));
 app.use(parser.json());
 
 app.listen(3000, ()=> {
@@ -12,7 +12,16 @@ app.listen(3000, ()=> {
 
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + "/index.html");
+    res.sendFile(__dirname + "/public/UI/index.html");
+});
+
+app.get('/read', (req, res) => {
+    res.end(fs.readFileSync('./server/data/posts.json', 'utf8'));
+});
+
+app.post('/write', (req, res) => {
+	fs.writeFileSync('./server/data/posts.json', "" + JSON.stringify (req.body));
+    res.end();
 });
 
 app.get('/getPhotoPost', (req, res)=>{
@@ -27,7 +36,7 @@ app.post('/getPhotoPosts', (req,res)=>{
     skip = req.query.skip || 0;
     top = req.query.top || 10;
 
-    console.log ("parameters filterConfig: " + filterConfig.author);
+    //console.log ("parameters filterConfig: " + filterConfig.author);
 
     photoPosts.forEach ((post) => {post.createdAt = new Date (post.createdAt);});
 
@@ -55,7 +64,13 @@ app.post('/getPhotoPosts', (req,res)=>{
     });
     result = result.slice(skip, top);
 
-    result ? res.send(result) : res.status(404).end();
+    if (result){
+    	res.send(result)
+    	res.status(200).end();
+    }
+    else{
+    	res.status(404).end();
+    }
 });
 
 app.post('/addPhotoPost', (req, res)=>{
@@ -72,11 +87,12 @@ app.post('/addPhotoPost', (req, res)=>{
         photoPosts.push(newPost);
         fs.writeFileSync('./server/data/posts.json', JSON.stringify(photoPosts));
         res.send ("Post was added.");
+        res.status(200).end();
     }
     else{
     	res.send ("Post wasn't added.");
+    	res.status(404).end();
     }
-    res.status(200).end();
 });
 
 let validatePhotoPost = function (post) {
@@ -115,6 +131,8 @@ app.put('/editPhotoPost', (req,res)=>{
 
     if (result === null) {
         res.send ("Don't find post with id = " + post.id);
+        fs.writeFileSync('./server/data/posts.json', JSON.stringify(photoPosts));
+        res.status(404).end();
     }
     else {
         if ("description" in post && (typeof post.description === "string") && post.description.length < 200) {
@@ -124,8 +142,9 @@ app.put('/editPhotoPost', (req,res)=>{
             result.photoLink = post.photoLink;
         }
         res.send ("Post successfully changed.");
+        fs.writeFileSync('./server/data/posts.json', JSON.stringify(photoPosts));
+        res.status(200).end();
     }
-    res.status(200).end();
 });
 
 app.delete('/removePhotoPost', (req, res)=>{
@@ -143,4 +162,5 @@ app.delete('/removePhotoPost', (req, res)=>{
         res.send (result);
         res.status(200).end(); 
     }
+    fs.writeFileSync('./server/data/posts.json', JSON.stringify(photoPosts));
 });
