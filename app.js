@@ -3,7 +3,7 @@ const fs=require('fs');
 const app = express();
 const parser = require('body-parser');
 
-app.use(express.static(__dirname + '/public/UI/'));
+app.use(express.static(__dirname + '/public/'));
 app.use(parser.json());
 
 app.listen(3000, ()=> {
@@ -12,7 +12,7 @@ app.listen(3000, ()=> {
 
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + "/public/UI/index.html");
+    res.sendFile(__dirname + "/public/index.html");
 });
 
 app.get('/read', (req, res) => {
@@ -27,7 +27,14 @@ app.post('/write', (req, res) => {
 app.get('/getPhotoPost', (req, res)=>{
     let photoPosts = JSON.parse (fs.readFileSync ('./server/data/posts.json', 'utf8'));
     let post = photoPosts.find((post) => String (req.query.id) === post.id);
-    post ? res.send (post) : res.status (404).end();
+
+    if (post){
+    	res.send (post);
+    	res.status (200).end ();
+    }
+    else{
+    	res.status (404).end();
+    }
 });
 
 app.post('/getPhotoPosts', (req,res)=>{
