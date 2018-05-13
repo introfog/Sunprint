@@ -201,70 +201,119 @@ let server = (function () {
         return post;
     }
 
+    let getPhotoPostsPromise = function (skip, top, filterConfig){
+       return new Promise((resolve, reject) => {
+            let data = '?skip=' + encodeURIComponent(visiblePosts + skip) + '&top=' + encodeURIComponent(visiblePosts + top);
+            let body = JSON.stringify (filterConfig);
+
+            let posts;
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', '/getPhotoPosts/' + data, false);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = () => {
+                if (xhr.status === 200) {
+                    resolve (xhr.responseText);
+                }
+                else{
+                    reject();
+                }
+            };
+            xhr.send(body);
+        });
+    }
+
     let getPhotoPosts = function (skip, top, filterConfig){
         skip = skip || 0;
         top = top || 10;
 
-        let data = '?skip=' + encodeURIComponent(visiblePosts + skip) + '&top=' + encodeURIComponent(visiblePosts + top);
-        let body = JSON.stringify (filterConfig);
-
-        let posts;
-        let xhr = new XMLHttpRequest();
-        xhr.open('POST', '/getPhotoPosts/' + data, false);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onreadystatechange = () => {
-            if (xhr.status === 200) {
-                posts = xhr.responseText;
-            }
+        
+        let tempFunc = async (skip, top, filterConfig) => {
+            let posts;
+            await getPhotoPostsPromise(skip, top, filterConfig).then(
+                result => {
+                    posts = result;
+                    posts = JSON.parse (posts);
+                    posts.forEach((post)=>{
+                        post.createdAt = new Date (post.createdAt);
+                    });
+                    DOMmodule.showPhotoPostsFromServer (posts);
+                    
+                }, error => console.log ("Error"));
         };
-        xhr.send(body);
 
-        posts = JSON.parse (posts);
-        posts.forEach((post)=>{
-            post.createdAt = new Date (post.createdAt);
-        });
-
-        return posts;
+        tempFunc(skip, top, filterConfig);
     }
 
-    let addPhotoPost = function (post){
-        let flag = false;;
-        let xhr = new XMLHttpRequest();
-        xhr.open('POST', '/addPhotoPost/', false);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onreadystatechange = () => {
-            if (xhr.status === 200) {
-                flag = true;
-            }
-        };
-        xhr.send(JSON.stringify (post));
+    let addPhotoPostPromise = (post) => {
+        return new Promise((resolve, reject) => {
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', '/addPhotoPost/', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = () => {
+                if (xhr.status === 200) {
+                    resolve();
+                } 
+                else {
+                    reject();
+                }
+            };
+            xhr.send(JSON.stringify (post));
+        });
+    };
 
+    let addPhotoPost = function (post){
+        let flag = true;
+        addPhotoPostPromise(post).then(response => flag = true, error => flag = false);
         return flag;
+    }
+
+    let removePhotoPostPromise = function (id) {
+        return new Promise((resolve, reject) => {
+            let xhr = new XMLHttpRequest();
+            xhr.open('DELETE', '/removePhotoPost/?id=' + id, true);
+            xhr.onreadystatechange = () => {
+                if (xhr.status === 200) {
+                    resolve();
+                }
+                else{
+                    reject();
+                }
+            };
+            xhr.send();
+        });
     }
 
     let removePhotoPost = function (id) {
-        let xhr = new XMLHttpRequest();
-        xhr.open('DELETE', '/removePhotoPost/?id=' + id, false);
-        xhr.send();
+        let flag = true;
+        removePhotoPostPromise (id).then (response => flag = true, error => flag = false);
+        return flag;
     }
 
-    let editPhotoPost = function (id, photoPost) {
-        let flag = false;
-        let data = '?id=' + encodeURIComponent(id);
-        let body = JSON.stringify (photoPost);
+     let editPhotoPostPromise = function (id, photoPost) {
+        return new Promise((resolve, reject) => {
+            let data = '?id=' + encodeURIComponent(id);
+            let body = JSON.stringify (photoPost);
 
-        let xhr = new XMLHttpRequest();
-        xhr.open('PUT', '/editPhotoPost/' + data, false);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onreadystatechange = () => {
-            if (xhr.status === 200) {
-                flag = true;
-            }
-        };
-        xhr.send(body);
-
-        return flag;
+            let xhr = new XMLHttpRequest();
+            xhr.open('PUT', '/editPhotoPost/' + data, false);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = () => {
+                if (xhr.status === 200) {
+                    resolve();
+                }
+                else{
+                    reject();
+                }
+            };
+            xhr.send(body);
+        });
     };
+
+    let editPhotoPost = function (id, photoPost) {
+        let flag = true;
+        editPhotoPostPromise (id, photoPost).then (response => flag = true, error => flag = false);
+        return flag;
+    }
 
     return {readPostsJSON, initialPostsJSON, writePostsJSON, getMaxPostID, getPhotoPost, 
         getPhotoPosts, addPhotoPost, removePhotoPost, editPhotoPost};

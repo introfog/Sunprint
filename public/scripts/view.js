@@ -173,8 +173,10 @@ let DOMmodule = (function () {
             visiblePosts = 0;
         }
 
-        let posts = server.getPhotoPosts (skip, top, filterConfig);
+        server.getPhotoPosts (skip, top, filterConfig);
+    };
 
+    let showPhotoPostsFromServer = function (posts){
         posts.forEach(function (value) {
             let newPost = createPost(value);
             if (newPost !== null) {
@@ -182,7 +184,7 @@ let DOMmodule = (function () {
                 visiblePosts++;
             }
         });
-    };
+    }
 
     let addPhotoPost = function (post) {
         if (server.addPhotoPost (post)){
@@ -191,18 +193,18 @@ let DOMmodule = (function () {
     };
 
     let removePhotoPost = function (id) {
-        server.removePhotoPost (id);
-
-        let remove = photoPosts.find(function (item) {
-            return item.getAttribute("id") === id;
-        });
-        visiblePosts--;
-        for (let i = 0; i < photoThreadHalf.childNodes.length; ++i) {
-            if (photoThreadHalf.childNodes[i] === remove) {
-                photoThreadHalf.removeChild(remove);
+        if (server.removePhotoPost (id)){
+            let remove = photoPosts.find(function (item) {
+                return item.getAttribute("id") === id;
+            });
+            visiblePosts--;
+            for (let i = 0; i < photoThreadHalf.childNodes.length; ++i) {
+                if (photoThreadHalf.childNodes[i] === remove) {
+                    photoThreadHalf.removeChild(remove);
+                }
             }
+            photoPosts.splice(photoPosts.indexOf(remove), 1);
         }
-        photoPosts.splice(photoPosts.indexOf(remove), 1);
     };
 
     let editPhotoPost = function (id, photoPost) {
@@ -230,7 +232,7 @@ let DOMmodule = (function () {
         initialUI();
     };
 
-    return {showPhotoPosts, addPhotoPost, removePhotoPost, editPhotoPost, initialActions, checkAuthorization};
+    return {showPhotoPosts, addPhotoPost, removePhotoPost, editPhotoPost, initialActions, checkAuthorization, showPhotoPostsFromServer};
 })();
 
 function runDOM() {
